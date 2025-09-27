@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Protected Medical Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #content { display: none; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+
+  <!-- Password screen -->
+  <div id="login" class="flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full">
+      <h1 class="text-xl font-bold mb-4 text-center">Enter Password</h1>
+      <input type="password" id="passwordInput" placeholder="Password"
+             class="border w-full p-2 rounded mb-4">
+      <button onclick="checkPassword()"
+              class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">
+        Unlock
+      </button>
+      <p id="error" class="text-red-500 text-sm mt-2 hidden">Incorrect password.</p>
+    </div>
+  </div>
+
+  <!-- Protected content -->
+  <div id="content" class="max-w-4xl mx-auto p-6">
+    <header class="bg-white rounded-2xl shadow p-6 mb-6">
+      <h1 class="text-2xl font-bold mb-2">Chris M Antunovich</h1>
+      <p><strong>DOB:</strong> 03/14/1970</p>
+      <p><strong>Phone:</strong> 559-471-5837</p>
+      <p><strong>Address:</strong> 2000 W Robin Ave, Visalia, CA 93291</p>
+    </header>
+
+    <section class="bg-white rounded-2xl shadow p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Recent Medical Visits</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>[Enter visit date] – [Doctor / Department] – [Reason]</li>
+      </ul>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Current Medications</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>[Medication name] – [Dosage] – [Frequency]</li>
+      </ul>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Priorities</h2>
+      <ul class="list-decimal list-inside space-y-2">
+        <li>[Example: Schedule follow-up with cardiology]</li>
+      </ul>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Provider Mistakes / Concerns</h2>
+      <ul class="list-disc list-inside space-y-2 text-red-600">
+        <li>[Example: Incorrect denial of referral on 9/15]</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    // SHA-256 hashing
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    // 🔑 Your chosen password's SHA-256 hash
+    const PASSWORD_HASH = "08121c54046315633fc874cecfa7185f58ee1959fb88a60817f1c8845577a058";
+
+    async function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      const hash = await sha256(input);
+
+      if (hash === PASSWORD_HASH) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("content").style.display = "block";
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
